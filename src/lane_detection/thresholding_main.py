@@ -125,7 +125,8 @@ class Threshold():
 
 		final_combined = np.zeros_like(dir_bin)
 		#final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1)))] = 1
-                final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1))) | hls_bin == 1] = 1
+        
+		final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1))) | hls_bin == 1] = 1
 
 		return final_combined, abs_bin, mag_bin, dir_bin, hls_bin  
 

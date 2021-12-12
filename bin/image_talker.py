@@ -24,12 +24,15 @@ class Source:
     def spin(self):
         cvb = CvBridge()
         while not rospy.core.is_shutdown():
+            # 读视频
             ret, cvim = self.cap.read()
             # print(ret)
             # cvim = cv2.imread('/home/zhangcaocao/catkin_ws/src/lane_detection/test/test2.jpg')
+            # 读入图像并裁剪
             cvim = cv2.resize(cvim ,(60, 80), interpolation=cv2.INTER_CUBIC)
             rate = rospy.Rate(30)
             rospy.loginfo("image shape: " + str(cvim.shape))
+            # 发布图片消息，cv -> ros_img
             self.pub.publish(cvb.cv2_to_imgmsg(cvim))
             rate.sleep()
 

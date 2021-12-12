@@ -6,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import calibration_main
-import thresholding_main
+#import thresholding_main
 
+# 投影变换
 
 def perspective_transform(img):
     '''
@@ -60,7 +61,8 @@ def region_of_interest(img, vertices):
 
 if __name__ == '__main__':
 
-    img_file = '/home/ubuntu/catkin_ws/src/lane_detection/test/test1.jpg'
+    img_file = '../../test/test1.jpg'
+    # 输入图像去畸变
     img = calibration_main.undistort_image(img_file, Visualization=False)
     imshape = img.shape
     
@@ -68,9 +70,12 @@ if __name__ == '__main__':
     # vertices = np.array([[(0.2*imshape[1], 0.63*imshape[0]), (0.8*imshape[1],0.63*imshape[0]),
     #                     (0.1*imshape[1],0.9*imshape[0]),(0.9*imshape[1], 0.9*imshape[0])]], dtype=np.int32)
         # imshape = img.shape
+    # 确定投影变换的顶点
     vertices = np.array([[(imshape[1], 0.5*imshape[0]), (imshape[1],0.8*imshape[0]),
                         (.0*imshape[1],0.8*imshape[0]),(.0*imshape[1], 0.5*imshape[0])]], dtype=np.int32)
+    # 先阈值化
     img_, mask = region_of_interest(img, vertices=vertices)
+
 
     warped, unwarped, m, m_inv = perspective_transform(img_)
     

@@ -105,4 +105,4 @@ def undistort_image(distort_img, Visualization=False, Do_calibration=False):
 
 
 if __name__ == '__main__':
-    undistort_image("/home/ubuntu/catkin_ws/src/lane_detection/test/test3.jpg", Visualization=True, Do_calibration=True)
+    undistort_image("../../test/test3.jpg", Visualization=True, Do_calibration=True)

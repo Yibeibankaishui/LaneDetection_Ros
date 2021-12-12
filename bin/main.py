@@ -39,15 +39,18 @@ class pipeline():
         # undist = calibration_main.undistort_image(img, Visualization=False)
         
         imshape = img.shape
+        # 顶点
         vertices = np.array([[(imshape[1], 0.6*imshape[0]), (imshape[1],0.9*imshape[0]),
                         (.0*imshape[1],0.9*imshape[0]),(.0*imshape[1], 0.6*imshape[0])]], dtype=np.int32)
         img , mask= perspective_regionofint_main.region_of_interest(img, vertices=vertices)
         undist = img
         # thresh_combined, grad_th, col_th 
+        # 阈值化
         final_combined, abs_bin, mag_bin, dir_bin, hls_bin  = thresholding_main.Threshold().combined_thresh(undist)
         perspective,unwarped ,m ,Minv = perspective_regionofint_main.perspective_transform(final_combined)
         #pass the perspective image to the lane fitting stage
         # ploty, dist_centre_val, self.Lan_detected, mapped_lane = sliding_main.sliding_window(10, 150, 6, _binary_img = perspective).sliding_windows()
+        # 滑动窗口
         slides_pers, left_fitx, right_fitx, ploty, avg_cur, dist_centre_val,  self.Lan_detected = sliding_main.for_sliding_window(perspective)
         
         #draw the detected lanes on the original image for_sliding_window
@@ -95,9 +98,11 @@ class pipeline():
             cvb = CvBridge()
             cvimg = cvb.imgmsg_to_cv2(Image)
             time1 = time.clock()
+            # 车道线，中线偏差，平均曲率
             result, dist_centre_val, avg_cur = self._pipeline(cvimg, 'debug')
             
-            rospy.loginfo("dist_centre_val:  {0}   ".format(dist_centre_val * 1000))      
+            rospy.loginfo("dist_centre_val:  {0}   ".format(dist_centre_val * 1000))    
+            # 发布图像  
             self.Result_Image_pub.publish(cvb.cv2_to_imgmsg(result))
             if (self.lan_detected()):
                 # number += 1
@@ -119,6 +124,7 @@ class pipeline():
     def _listener(self):
         rospy.init_node('lane_detection_node', anonymous=True)
         #Subscriber函数第一个参数是topic的名称，第二个参数是接受的数据类型 第三个参数是回调函数的名称
+        # 订阅图像消息
         rospy.Subscriber('/Image', sensor_msgs.msg.Image, self._callback, queue_size=QUEUE_SIZE)
         rospy.spin()
 
