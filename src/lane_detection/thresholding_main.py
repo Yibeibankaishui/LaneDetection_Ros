@@ -125,14 +125,15 @@ class Threshold():
 		
 		mag_bin = self._mag_thresh(img, sobel_kernel=3, _mag_thresh=tuple((self._mag_thresh_val_min, self._mag_thresh_val_max)))
 		dir_bin = self._dir_threshold(img, sobel_kernel=15, thresh=tuple((self._dir_thresh_val_min, self._dir_thresh_val_max)))
-		hls_bin = self._hls_thresh(img, thresh=tuple((self._hls_thresh_val_min, self._hls_thresh_val_max)))
+		# 不用检测黄色
+		# hls_bin = self._hls_thresh(img, thresh=tuple((self._hls_thresh_val_min, self._hls_thresh_val_max)))
 
 		final_combined = np.zeros_like(dir_bin)
-		#final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1)))] = 1
+		final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1)))] = 1
         
-		final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1))) | hls_bin == 1] = 1
+		# final_combined[(abs_bin == 1 | ((mag_bin == 1) & (dir_bin == 1))) | hls_bin == 1] = 1
 
-		return final_combined, abs_bin, mag_bin, dir_bin, hls_bin  
+		return final_combined, abs_bin, mag_bin, dir_bin
 
 
 if __name__ == '__main__':

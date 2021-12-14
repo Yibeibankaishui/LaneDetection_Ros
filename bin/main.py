@@ -55,8 +55,7 @@ class pipeline():
         slides_pers, left_fitx, right_fitx, ploty, avg_cur, dist_centre_val, self.Lan_detected = sliding_main.for_sliding_window(perspective)
         
         #draw the detected lanes on the original image for_sliding_window
-
-         
+ 
         # = self._draw_on_original(undist, left_fitx, right_fitx, ploty, Minv)
         mapped_lane = slides_pers.astype(np.uint8)
         # mapped_lane = undist
