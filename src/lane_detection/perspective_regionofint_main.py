@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import calibration_main
-#import thresholding_main
+# import thresholding_main
 
 # 投影变换
 
@@ -19,15 +19,13 @@ def perspective_transform(img):
     #                     (0,imshape[0]),(imshape[1], 0)]], dtype=np.int32)
     # img = region_of_interest(img, vertices = vertices)
 
-    
-
     vertices = np.array([[(imshape[1], 0.53*imshape[0]), (imshape[1], 0.95*imshape[0]),
                        (0.1*imshape[1],0.95*imshape[0]),(0.1*imshape[1], 0.53*imshape[0])]], dtype=np.float32)
     src= np.float32(vertices)
     dst = np.float32([[img.shape[1],0],[img.shape[1],img.shape[0]],
                       [0.15*img.shape[1],img.shape[0]],[0.15*img.shape[1],0]])
 
-    
+    # 计算变换矩阵及其逆矩阵
     m = cv2.getPerspectiveTransform(src, dst)
     minv = cv2.getPerspectiveTransform(dst, src)
     img_size = (imshape[1], imshape[0]) 
@@ -51,9 +49,10 @@ def region_of_interest(img, vertices):
         
     #filling pixels inside the polygon defined by "vertices" with the fill color 
     
-    #    
+    # 填充图形
     cv2.fillPoly(mask, vertices, ignore_mask_color)
     #returning the image only where mask pixels are nonzero
+    # 对图像每个像素进行二进制 与 操作
     masked_image = cv2.bitwise_and(img, mask)
     # print type(masked_image)
     return masked_image, mask
@@ -61,9 +60,12 @@ def region_of_interest(img, vertices):
 
 if __name__ == '__main__':
 
-    img_file = '../../test/test1.jpg'
-    # 输入图像去畸变
-    img = calibration_main.undistort_image(img_file, Visualization=False)
+    img_file = '../../test/test2.jpg'
+    # # 输入图像去畸变
+    # img = calibration_main.undistort_image(img_file, Visualization=False)
+
+    # 不去畸变
+    img = cv2.imread(img_file)
     imshape = img.shape
     
     # img, abs_bin, mag_bin, dir_bin, hls_bin = thresholding_main.combined_thresh(img)
@@ -73,7 +75,7 @@ if __name__ == '__main__':
     # 确定投影变换的顶点
     vertices = np.array([[(imshape[1], 0.5*imshape[0]), (imshape[1],0.8*imshape[0]),
                         (.0*imshape[1],0.8*imshape[0]),(.0*imshape[1], 0.5*imshape[0])]], dtype=np.int32)
-    # 先阈值化
+    # 
     img_, mask = region_of_interest(img, vertices=vertices)
 
 

@@ -220,7 +220,7 @@ def for_sliding_window(binary_warped):
     result = cv2.addWeighted(out_img, 1, window_img, 1, 0)
     camera_centre = result.shape[1]/2.0
 
-    print "leftx.size {0},rightx.size {1}".format(leftx.size, rightx.size)
+    print ("leftx.size {0},rightx.size {1}".format(leftx.size, rightx.size))
     #if the lane was detectded then calculate the curvatire or use the history
     if (leftx.size > MIN_SIZE and rightx.size > MIN_SIZE ):
 
@@ -244,7 +244,7 @@ def for_sliding_window(binary_warped):
         cv2.line(result, (int(result.shape[1]/2),0), (int(result.shape[1]/2), int(result.shape[0])), (0, 0, 250), 2)
         
 
-        print 'abs(left_fitx[num] - right_fitx[num])', abs(left_fitx[right_x_num] - right_fitx[left_x_num])
+        print ('abs(left_fitx[num] - right_fitx[num])', abs(left_fitx[right_x_num] - right_fitx[left_x_num]))
         
         if (abs(left_fitx[right_x_num] - right_fitx[left_x_num]) <= 3):
             dist_centre_val = 30000 * pre_dist_centre_val

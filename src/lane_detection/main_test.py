@@ -9,7 +9,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
-from moviepy.editor import VideoFileClip
+# from moviepy.editor import VideoFileClip
 
 import calibration_main 
 import perspective_regionofint_main
@@ -139,7 +139,7 @@ def pipeline(img):
 
 
 
-image = cv2.imread('/home/zhanaogcaoc/Desktop/lane_detection/bin/test_images/test.jpg')
+image = cv2.imread('../../test/test2.jpg')
 
 mapped_lane = pipeline(image)
 plt.imshow(mapped_lane)

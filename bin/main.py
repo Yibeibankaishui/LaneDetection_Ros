@@ -47,11 +47,12 @@ class pipeline():
         # thresh_combined, grad_th, col_th 
         # 阈值化
         final_combined, abs_bin, mag_bin, dir_bin, hls_bin  = thresholding_main.Threshold().combined_thresh(undist)
-        perspective,unwarped ,m ,Minv = perspective_regionofint_main.perspective_transform(final_combined)
+        # 投影变换
+        perspective, unwarped, m, Minv = perspective_regionofint_main.perspective_transform(final_combined)
         #pass the perspective image to the lane fitting stage
         # ploty, dist_centre_val, self.Lan_detected, mapped_lane = sliding_main.sliding_window(10, 150, 6, _binary_img = perspective).sliding_windows()
         # 滑动窗口
-        slides_pers, left_fitx, right_fitx, ploty, avg_cur, dist_centre_val,  self.Lan_detected = sliding_main.for_sliding_window(perspective)
+        slides_pers, left_fitx, right_fitx, ploty, avg_cur, dist_centre_val, self.Lan_detected = sliding_main.for_sliding_window(perspective)
         
         #draw the detected lanes on the original image for_sliding_window
 

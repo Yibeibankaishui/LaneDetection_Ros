@@ -15,15 +15,16 @@ from lane_detection import *
 class Threshold():
 	def __init__(self):
 
+		# 水平方向梯度
 		self._abs_sobel_thresh_val_min 	= (rospy.get_param("/lane_detection_node/_abs_sobel_thresh_min", None))
 		self._abs_sobel_thresh_val_max 	= (rospy.get_param("/lane_detection_node/_abs_sobel_thresh_max", None))
-
+		# 梯度幅值
 		self._mag_thresh_val_min 		= (rospy.get_param("/lane_detection_node/_mag_thresh_min", None))
 		self._mag_thresh_val_max 		= (rospy.get_param("/lane_detection_node/_mag_thresh_max", None))
-
+		# 梯度方向
 		self._dir_thresh_val_min 		= (rospy.get_param("/lane_detection_node/_dir_threshold_min", None))
 		self._dir_thresh_val_max 		= (rospy.get_param("/lane_detection_node/_dir_threshold_max", None))
-
+		# S通道
 		self._hls_thresh_val_min 		= (rospy.get_param("/lane_detection_node/_hls_thresh_min", None))
 		self._hls_thresh_val_max 		= (rospy.get_param("/lane_detection_node/_hls_thresh_max", None))
 		
@@ -68,6 +69,7 @@ class Threshold():
 		gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 		sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
 		sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
+		# 求梯度的幅值
 		gradmag = np.sqrt(sobelx**2 + sobely**2)
 		# Rescale to 8 bit
 		scale_factor = np.max(gradmag)/255
@@ -89,6 +91,7 @@ class Threshold():
 		sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
 		# Take the absolute value of the gradient direction,
 		# apply a threshold, and create a binary image result
+		# 求梯度方向的绝对值
 		absgraddir = np.arctan2(np.absolute(sobely), np.absolute(sobelx))
 		dir_bin_image =  np.zeros_like(absgraddir)
 		dir_bin_image[(absgraddir >= thresh[0]) & (absgraddir <= thresh[1])] = 1
@@ -104,7 +107,8 @@ class Threshold():
 		hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
 		s_channel = hls[:,:,2]
 		hls_bin_image = np.zeros_like(s_channel)
-		hls_bin_image[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
+		# S饱和度通道，阈值： thresh[0] ~ thresh[1]
+		hls_bin_image[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1		
 		return hls_bin_image
 
 

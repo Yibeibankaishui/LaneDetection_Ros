@@ -8,7 +8,12 @@ import matplotlib.image as mpimg
 import glob
 import pickle
 
-ROOT_CAMERA_PATH = "/home/ubuntu/catkin_ws/src/lane_detection/src/lane_detection/camera_cal/"
+# import sys
+# from importlib import reload
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
+
+ROOT_CAMERA_PATH = "./camera_cal/"
 
 def _get_camera_calibration():
     '''
