@@ -46,7 +46,7 @@ class pipeline():
         undist = img
         # thresh_combined, grad_th, col_th 
         # 阈值化
-        final_combined, abs_bin, mag_bin, dir_bin, hls_bin  = thresholding_main.Threshold().combined_thresh(undist)
+        final_combined, abs_bin, mag_bin, dir_bin = thresholding_main.Threshold().combined_thresh(undist)
         # 投影变换
         perspective, unwarped, m, Minv = perspective_regionofint_main.perspective_transform(final_combined)
         #pass the perspective image to the lane fitting stage
