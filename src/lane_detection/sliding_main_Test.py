@@ -158,7 +158,7 @@ class sliding_window():
         out_img = _ployfit_lane(leftx, lefty, rightx, righty)
         dist_centre_val, Pre_Dist_Center_Val, result_img = _cal_dist_centre_val(out_img)
 
-        return self.ploty, dist_centre_val, slef.Lane_Detected, result_img
+        return self.ploty, dist_centre_val, self.Lane_Detected, result_img
 
 
 
