@@ -72,7 +72,6 @@ class PID_NODE():
             # self.pub_to_base(normedsteeringAngle)
             return steer, normedsteeringAngle
 
-
         except Exception as e:
             rospy.logerr(e)
 
