@@ -20,6 +20,7 @@ from std_msgs.msg import Float32
 
 from pid_node import *
 
+
 QUEUE_SIZE = 1
 
 number = 0
@@ -33,13 +34,19 @@ class pipeline():
         self.Lan_detected       = False
         self.pidnode            = PID_NODE(0.6, 0, 0.1)
 
+    def _sign_detect(self, img, if_show):
+
+        result_img, sign = sign_detection.sign_detector(img, if_show)
+
+        return result_img, sign
+
     def _pipeline(self, img, model='debug'):
 
         # print "self._mag_thresh : {0}".format(type(list(self._mag_thresh)))
         # undist = calibration_main.undistort_image(img, Visualization=False)
         
         imshape = img.shape
-        # 顶点
+        # ROI 顶点
         vertices = np.array([[(imshape[1], 0.6*imshape[0]), (imshape[1],0.9*imshape[0]),
                         (.0*imshape[1],0.9*imshape[0]),(.0*imshape[1], 0.6*imshape[0])]], dtype=np.int32)
         img , mask= perspective_regionofint_main.region_of_interest(img, vertices=vertices)
@@ -66,11 +73,17 @@ class pipeline():
         font = cv2.FONT_HERSHEY_COMPLEX
         
         if model == 'debug':
-            diagScreen                       = np.zeros((120,160, 3), dtype=np.uint8)  
-            diagScreen[0:60, 80:160]         = cv2.resize(np.dstack((perspective*255, perspective*255, perspective*255)), (80,60), interpolation=cv2.INTER_AREA) 
-            diagScreen[60:120, 0:80]         = cv2.resize(np.dstack((final_combined*255,final_combined*255,final_combined*255)), (80,60), interpolation=cv2.INTER_AREA)  
-            diagScreen[0:60:,0:80]           = cv2.resize(img, (80,60), interpolation=cv2.INTER_AREA) 
-            diagScreen[60:120, 80:160]       = cv2.resize(mapped_lane, (80,60), interpolation=cv2.INTER_AREA) 
+            # diagScreen                       = np.zeros((120,160, 3), dtype=np.uint8)  
+            # diagScreen[0:60, 80:160]         = cv2.resize(np.dstack((perspective*255, perspective*255, perspective*255)), (80,60), interpolation=cv2.INTER_AREA) 
+            # diagScreen[60:120, 0:80]         = cv2.resize(np.dstack((final_combined*255,final_combined*255,final_combined*255)), (80,60), interpolation=cv2.INTER_AREA)  
+            # diagScreen[0:60:,0:80]           = cv2.resize(img, (80,60), interpolation=cv2.INTER_AREA) 
+            # diagScreen[60:120, 80:160]       = cv2.resize(mapped_lane, (80,60), interpolation=cv2.INTER_AREA) 
+            diagScreen                       = np.zeros((640,480, 3), dtype=np.uint8)  
+            diagScreen[0:320, 240:480]         = cv2.resize(np.dstack((perspective*255, perspective*255, perspective*255)), (240,320), interpolation=cv2.INTER_AREA) 
+            diagScreen[320:640, 0:240]         = cv2.resize(np.dstack((final_combined*255,final_combined*255,final_combined*255)), (240,320), interpolation=cv2.INTER_AREA)  
+            diagScreen[0:320:,0:240]           = cv2.resize(img, (240,320), interpolation=cv2.INTER_AREA) 
+            diagScreen[320:640, 240:480]       = cv2.resize(mapped_lane, (240,320), interpolation=cv2.INTER_AREA) 
+            # diagScreen         = cv2.resize(np.dstack((final_combined*255,final_combined*255,final_combined*255)), (160, 120), interpolation=cv2.INTER_AREA)
 
             # return diagScreen, dist_centre_val, avg_cur
 
@@ -99,10 +112,17 @@ class pipeline():
             cvimg = cvb.imgmsg_to_cv2(Image)
             time1 = time.clock()
             # 车道线，中线偏差，平均曲率
-            result, dist_centre_val, avg_cur = self._pipeline(cvimg, 'debug')
-            
+            # 这里的尺寸必须是 60 80 ？
+            # 480， 640  ->  120, 160
+            cvimg_resize = cv2.resize(cvimg ,(120, 160), interpolation=cv2.INTER_CUBIC)
+            result, dist_centre_val, avg_cur = self._pipeline(cvimg_resize, 'debug')
+            # 检测标志
+            result_sign, sign = self._sign_detect(cvimg, 1)
+            # rospy.loginfo("sign:  {0}   ".format(sign))
+
+            # 第一行显示
             rospy.loginfo("dist_centre_val:  {0}   ".format(dist_centre_val * 1000))    
-            # 发布图像  
+            # 发布图像  给rviz
             self.Result_Image_pub.publish(cvb.cv2_to_imgmsg(result))
             if (self.lan_detected()):
                 # number += 1
@@ -111,8 +131,13 @@ class pipeline():
                 # r < 0; l > 0 。
                 # print number
                 # 减少小数点，提高计算速度; 
+                # 发布偏差信息
                 self.Deviation_pub.publish(dist_centre_val * 1000)
-                self.pidnode.PID_Cal(round((dist_centre_val * 1000), 3))
+                # pidnode接收偏差信息
+                pid_out, pid_out_angle = self.pidnode.PID_Cal(round((dist_centre_val * 1000), 3))
+                self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
+                if (sign != 0):
+                    self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
                 
             else:
                 rospy.logerr("---------- not detetced lane -------------")

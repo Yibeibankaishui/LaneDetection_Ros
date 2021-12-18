@@ -70,7 +70,7 @@ def sign_detector(input_img, if_show):
         print("no CONTOURS!")
         if (if_show):
             cv2.imshow("image", img)
-        return 0
+        return img, 0
     else:
         # 找最大椭圆为标志
         S1_max = 0
@@ -99,14 +99,13 @@ def sign_detector(input_img, if_show):
         result = find_min(sum_for_x)    # -1 left;  1 right
         if (if_show):
             cv2.imshow("image", img)
-
-        return result
+        return img, result
 
     else:    
         if (if_show):
             cv2.imshow("image", img)
         print("sign NOT found!")
-        return 0
+        return img, 0
 
 
 if __name__ == "__main__":

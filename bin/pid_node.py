@@ -8,6 +8,7 @@ MAX_STEER = 16.0
 
 from geometry_msgs.msg import Twist, TwistStamped
 from lane_detection import *
+from sign_detection import *
 import rospy
 from std_msgs.msg import Float32
 
@@ -55,6 +56,7 @@ class PID_NODE():
         try:
             global MAX_STEER
             p_error, i_error, d_error = self.Update_Err(cte)
+            # pid output
             steer = -(self.kp * p_error + self.ki * i_error + self.kd * d_error)
             # print "steer {0}".format(steer)
             if abs(steer) > MAX_STEER:
@@ -66,12 +68,24 @@ class PID_NODE():
             # (-0.5, 0.5) --- +0.5 -> (0, 1)
             #    0   0.5  1  
             normedsteeringAngle = (steer / (5.1 * MAX_STEER))
-            self.SteeringAngle_CMD.angular.z = normedsteeringAngle
-            self.Lane_Steer_pub.publish(self.SteeringAngle_CMD)
-            rospy.loginfo("normedsteeringAngle: {0}".format(normedsteeringAngle))
+            # self.SteeringAngle_CMD.angular.z = normedsteeringAngle
+            # self.pub_to_base(normedsteeringAngle)
+            return steer, normedsteeringAngle
 
 
         except Exception as e:
             rospy.logerr(e)
+
+
+    def pub_to_base(self, vel_angle, vel_linear = 0.15):
+        
+        self.SteeringAngle_CMD.angular.z = vel_angle
+        # 发布指令
+        self.SteeringAngle_CMD.linear.x = vel_linear
+        self.Lane_Steer_pub.publish(self.SteeringAngle_CMD)
+        rospy.loginfo("normedsteeringAngle: {0}".format(vel_angle))
+
+
+
 
 #  rosrun rosserial_python serial_node.py /dev/ttyUSB0

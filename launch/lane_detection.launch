@@ -1,4 +1,5 @@
 <launch>
+
     <node pkg="lane_detection" type="main.py" name="lane_detection_node" output="screen"> 
 
       
@@ -20,5 +21,7 @@
       <param name="_hls_thresh_max" value="250"/>
 
     </node>
-<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lane_detection)/rviz/view_image.rviz"/>
+
+    <node pkg="lane_detection" type="image_talker.py" name="image_talker" output="screen"/> 
+<!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find lane_detection)/rviz/view_image.rviz"/> -->
 </launch>
