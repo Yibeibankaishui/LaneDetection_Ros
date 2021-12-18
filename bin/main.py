@@ -25,6 +25,9 @@ QUEUE_SIZE = 1
 
 number = 0
 
+# 定义行进过程中的状态 前进 进圆盘 前进 出圆盘 前进 进圆盘 前进 出圆盘 前进 
+STATUS = 1
+
 class pipeline():
     def __init__(self):
         
@@ -32,6 +35,7 @@ class pipeline():
         self.Deviation_pub      = rospy.Publisher('Deviation', Float32, queue_size=QUEUE_SIZE)
         self.Avg_cur_pub        = rospy.Publisher('Avg_curvature', Float32, queue_size=QUEUE_SIZE)
         self.Lan_detected       = False
+        # PID 参数设置
         self.pidnode            = PID_NODE(0.6, 0, 0.1)
 
     def _sign_detect(self, img, if_show):
@@ -124,6 +128,7 @@ class pipeline():
             rospy.loginfo("dist_centre_val:  {0}   ".format(dist_centre_val * 1000))    
             # 发布图像  给rviz
             self.Result_Image_pub.publish(cvb.cv2_to_imgmsg(result))
+            self.pidnode.pub_to_base(vel_linear = 0, vel_angle = 1)
             if (self.lan_detected()):
                 # number += 1
                 self.Avg_cur_pub.publish(avg_cur)
@@ -135,9 +140,9 @@ class pipeline():
                 self.Deviation_pub.publish(dist_centre_val * 1000)
                 # pidnode接收偏差信息
                 pid_out, pid_out_angle = self.pidnode.PID_Cal(round((dist_centre_val * 1000), 3))
-                self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
-                if (sign != 0):
-                    self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
+                # self.pidnode.pub_to_base(vel_linear = -1, vel_angle = 0)
+                # if (sign != 0):
+                    # self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
                 
             else:
                 rospy.logerr("---------- not detetced lane -------------")
@@ -151,6 +156,8 @@ class pipeline():
         #Subscriber函数第一个参数是topic的名称，第二个参数是接受的数据类型 第三个参数是回调函数的名称
         # 订阅图像消息
         rospy.Subscriber('/Image', sensor_msgs.msg.Image, self._callback, queue_size=QUEUE_SIZE)
+
+        # 进入循环
         rospy.spin()
 
     def lan_detected(self):
@@ -158,6 +165,7 @@ class pipeline():
         return self.Lan_detected
 
     def main(self):
+        # 初始化节点并订阅图像消息
         self._listener()
 
 
