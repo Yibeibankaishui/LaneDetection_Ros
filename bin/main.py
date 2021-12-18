@@ -134,14 +134,10 @@ class pipeline():
                 # 发布偏差信息
                 self.Deviation_pub.publish(dist_centre_val * 1000)
                 # pidnode接收偏差信息
-<<<<<<< HEAD
                 pid_out, pid_out_angle = self.pidnode.PID_Cal(round((dist_centre_val * 1000), 3))
                 self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
                 if (sign != 0):
                     self.pidnode.pub_to_base(vel_linear = 0.5, vel_angle = 0)
-=======
-                self.pidnode.PID_Cal(round((dist_centre_val * 1000), 3))
->>>>>>> cc0acaf327406e997f177864d055618612942276
                 
             else:
                 rospy.logerr("---------- not detetced lane -------------")
