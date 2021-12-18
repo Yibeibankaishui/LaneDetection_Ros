@@ -8,6 +8,7 @@ MAX_STEER = 16.0
 
 from geometry_msgs.msg import Twist, TwistStamped
 from lane_detection import *
+from sign_detection import *
 import rospy
 from std_msgs.msg import Float32
 
@@ -66,7 +67,9 @@ class PID_NODE():
             # (-0.5, 0.5) --- +0.5 -> (0, 1)
             #    0   0.5  1  
             normedsteeringAngle = (steer / (5.1 * MAX_STEER))
-            self.SteeringAngle_CMD.angular.z = normedsteeringAngle
+            # self.SteeringAngle_CMD.angular.z = normedsteeringAngle
+            self.SteeringAngle_CMD.angular.z = 0
+            # 发布指令
             self.Lane_Steer_pub.publish(self.SteeringAngle_CMD)
             rospy.loginfo("normedsteeringAngle: {0}".format(normedsteeringAngle))
 

@@ -142,6 +142,7 @@ def for_sliding_window(binary_warped):
     @_2：只有一条检测到：只拟合一条, 返回一个标志。
     '''
     #if all lane is detected then try to fit the poly
+    ploty      = np.linspace(0, out_img.shape[0]-1, out_img.shape[0] )
     if left_lane.detected == True and right_lane.detected == True:
         # Fit a second order polynomial to each
         # 得到的是多项式系数
@@ -216,6 +217,8 @@ def for_sliding_window(binary_warped):
     out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 255]
     out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [255, 0, 255]
 
+    print(left_lane.bestx.shape)
+    print(ploty.shape)
     left_line_window1 = np.array([np.transpose(np.vstack([left_lane.bestx-margin, ploty]))])
     left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_lane.bestx+margin, ploty])))])
     left_line_pts = np.hstack((left_line_window1, left_line_window2))

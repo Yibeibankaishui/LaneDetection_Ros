@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 import math
 import sys
 import time
@@ -29,7 +30,8 @@ class Source:
             # print(ret)
             # cvim = cv2.imread('/home/zhangcaocao/catkin_ws/src/lane_detection/test/test2.jpg')
             # 读入图像并裁剪
-            cvim = cv2.resize(cvim ,(60, 80), interpolation=cv2.INTER_CUBIC)
+            # 相机读入尺寸为(480, 640)，原先为60，80
+            cvim = cv2.resize(cvim ,(480, 640), interpolation=cv2.INTER_CUBIC)
             rate = rospy.Rate(30)
             rospy.loginfo("image shape: " + str(cvim.shape))
             # 发布图片消息，cv -> ros_img
@@ -50,4 +52,5 @@ def main(args):
     rospy.core.signal_shutdown(outcome)
 
 if __name__ == '__main__':
+    # argv定义摄像头编号
     main(sys.argv)

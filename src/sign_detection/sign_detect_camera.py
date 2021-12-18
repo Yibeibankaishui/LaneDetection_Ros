@@ -18,8 +18,8 @@ if __name__ == "__main__":
             print("Can't receive frame (stream end?). Exiting ...")
             break
         # 显示结果帧e
-
-        sign_detector(frame,1)
+        print(frame.shape)
+        sign_detector(frame, 1)
         # cv2.imshow('frame', frame)
         if cv2.waitKey(1) == ord('q'):
             break

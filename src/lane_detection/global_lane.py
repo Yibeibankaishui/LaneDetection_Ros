@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 global left_lane 
 global right_lane
@@ -10,7 +12,10 @@ class Line():
         # x values of the last n fits of the line
         self.recent_xfitted = [] 
         #average x values of the fitted line over the last n iterations
-        self.bestx = np.zeros(80)
+        # 跟图像尺寸有关 (60, 80) --> 80
+        # 输入（480， 640）
+        # 缩小 （120，160）
+        self.bestx = np.zeros(160)
         #polynomial coefficients averaged over the last n iterations
         self.best_fit = np.zeros(3)  
         #polynomial coefficients for the most recent fit
